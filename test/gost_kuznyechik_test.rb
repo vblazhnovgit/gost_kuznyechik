@@ -32,6 +32,11 @@ SelfTestGostKEcbEncText = [
 	0x3a, 0x02, 0xc4, 0xc5, 0xaa, 0x8a, 0xda, 0x98
 ].pack('C*').freeze
 
+# MAC
+SelfTestGostKMacValue = [
+  0x33, 0x6f, 0x4d, 0x29, 0x60, 0x59, 0xfb, 0xe3
+].pack('C*').freeze
+
 # CTR
 SelfTestGostKCtrSV = [
   0x12, 0x34, 0x56, 0x78, 0x90, 0xab, 0xce, 0xf0, 
@@ -64,6 +69,15 @@ class GostKuznyechikTest < Minitest::Test
     
     decrypted_text = KuznyechikEcb.new(key).decrypt(encrypted_test)
     assert decrypted_text == plain_text 
+  end
+
+  def test_mac_standard
+    key = SelfTestGostKMasterKeyData
+    plain_text = SelfTestGostKPlainText
+    mac_test = SelfTestGostKMacValue
+
+    mac = KuznyechikMac.new(key, mac_test.length).update(plain_text).final
+    assert mac == SelfTestGostKMacValue 
   end
   
   def test_ctr_standard
