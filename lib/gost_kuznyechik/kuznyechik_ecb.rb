@@ -4,11 +4,11 @@ module GostKuznyechik
     def initialize(key)
       @key = key.dup.force_encoding('BINARY')
       # @inkey => [4] uint_64, native-endian
-      @inkey = keyToNumbers(@key)
+      @inkey = self.keyToNumbers(@key)
 
       # @keys => [10*2] uint_64, native-endian
-      @encrypt_keys = expandEncryptKeys(@inkey)
-      @decrypt_keys = expandDecryptKeys(@inkey)
+      @encrypt_keys = self.expandEncryptKeys(@inkey)
+      @decrypt_keys = self.expandDecryptKeys(@inkey)
 =begin    
       puts "@encrypt_keys:"
       (0...@encrypt_keys.length).step(2) do |i|
@@ -40,7 +40,7 @@ module GostKuznyechik
 =end    
       encrypted_blocks = []
       blocks.each do |block|
-        encryptedBlock = encryptBlock(block, @encrypt_keys)
+        encryptedBlock = self.encryptBlock(block, @encrypt_keys)
   #        puts "encryptedBlock: #{encryptedBlock.unpack('H*')[0]}"
         encrypted_blocks << encryptedBlock
   #        puts "encrypted_blocks.length = #{encrypted_blocks.length}"
@@ -68,7 +68,7 @@ module GostKuznyechik
 =end    
       decrypted_blocks = []
       blocks.each do |block|
-        decryptedBlock = decryptBlock(block, @decrypt_keys)
+        decryptedBlock = self.decryptBlock(block, @decrypt_keys)
   #        puts "decryptedBlock: #{decryptedBlock.unpack('H*')[0]}"
         decrypted_blocks << decryptedBlock
   #        puts "decrypted_blocks.length = #{decrypted_blocks.length}"
