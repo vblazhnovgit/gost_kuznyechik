@@ -213,8 +213,8 @@ module GostKuznyechik
       data << pair[1].unpack('Q*')[0]
       round = NumberOfRounds - 1
       # round == 9
-      data[0] ^= @keys[2 * round]
-      data[1] ^= @keys[2 * round + 1] 
+      data[0] ^= keys[2 * round]
+      data[1] ^= keys[2 * round + 1] 
       round -= 1
       # round == 8
       data[0] = funcS(data[0])

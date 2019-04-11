@@ -56,26 +56,26 @@ class GostKuznyechikTest < Minitest::Test
 
   def test_ecb_standard
     key = SelfTestGostKMasterKeyData
-    plainText = SelfTestGostKPlainText
-    encryptedTest = SelfTestGostKEcbEncText
+    plain_text = SelfTestGostKPlainText
+    encrypted_test = SelfTestGostKEcbEncText
 
-    encryptedText = KuznyechikEcb.new(key).encrypt(plainText)
-    assert encryptedText == encryptedTest 
+    encrypted_text = KuznyechikEcb.new(key).encrypt(plain_text)
+    assert encrypted_text == encrypted_test 
     
-    decryptedText = KuznyechikEcb.new(key).decrypt(encryptedTest)
-    assert decryptedText == plainText 
+    decrypted_text = KuznyechikEcb.new(key).decrypt(encrypted_test)
+    assert decrypted_text == plain_text 
   end
   
   def test_ctr_standard
     key = SelfTestGostKMasterKeyData
     iv = SelfTestGostKCtrSV
     plain_text = SelfTestGostKPlainText
-    encryptedTest = SelfTestGostKCtrEncText
+    encrypted_test = SelfTestGostKCtrEncText
 
     encrypted_text = KuznyechikCtr.new(key, iv, 16).crypt(plain_text)
-    assert encrypted_text == encryptedTest
+    assert encrypted_text == encrypted_test
     
-    decrypted_text = KuznyechikCtr.new(key, iv, 16).crypt(encryptedTest)
-    assert decryptedText == plainText 
+    decrypted_text = KuznyechikCtr.new(key, iv, 16).crypt(encrypted_test)
+    assert decrypted_text == plain_text 
   end
 end

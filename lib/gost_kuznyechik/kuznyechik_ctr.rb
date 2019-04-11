@@ -3,9 +3,9 @@ module GostKuznyechik
     def initialize(key, iv, gamma_s)
       @key = key.dup.force_encoding('BINARY')
       # @inkey => [4] uint_64, native-endian
-      @inkey = self.keyToNumbers(@key)
+      @inkey = self.class.keyToNumbers(@key)
       
-      @keys = self.expandEncryptKeys(@inkey)
+      @keys = self.class.expandEncryptKeys(@inkey)
       @gamma_s = gamma_s
       @iv = iv.dup.force_encoding('BINARY')
       @prev_len = 0
@@ -40,7 +40,7 @@ module GostKuznyechik
           data_index += @gamma_s - @prev_len
           @bytes_count += @gamma_s - @prev_len
           data_len -= @gamma_s - @prev_len
-          self.incrementModulo(@counter, BlockLengthInBytes)
+          self.class.incrementModulo(@counter, BlockLengthInBytes)
   #        puts '@counter:'
   #        printBytes(@counter)
           @prev_len = 0      
@@ -49,7 +49,7 @@ module GostKuznyechik
       (0...(data_len / @gamma_s)).each do |i|
   #      puts '@counter:'
   #      printBytes(@counter)
-        @tmp_block = self.encryptBlock(@counter, @keys)
+        @tmp_block = self.class.encryptBlock(@counter, @keys)
   #      puts '@tmp_block:'
   #      printBytes(@tmp_block)
         (0...@gamma_s).each do |j|
@@ -60,7 +60,7 @@ module GostKuznyechik
         data_index += @gamma_s
         @bytes_count += @gamma_s
         data_len -= @gamma_s
-        self.incrementModulo(@counter, BlockLengthInBytes)
+        self.class.incrementModulo(@counter, BlockLengthInBytes)
   #      puts 'Incremented @counter:'
   #      printBytes(@counter)
         @prev_len = 0
@@ -69,7 +69,7 @@ module GostKuznyechik
       
       if data_len > 0 then
   #      binding.pry
-        @tmp_block = encryptBlock(@counter, @keys)
+        @tmp_block = self.class.encryptBlock(@counter, @keys)
   #      puts '@tmp_block:'
   #      printBytes(@tmp_block)
         (0...data_len).each do |j|
