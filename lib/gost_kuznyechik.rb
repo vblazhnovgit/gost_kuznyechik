@@ -6,4 +6,5 @@ module GostKuznyechik
   require "gost_kuznyechik/kuznyechik_ecb"
   require "gost_kuznyechik/kuznyechik_mac"
   require "gost_kuznyechik/kuznyechik_ctr"
+  require "gost_kuznyechik/kuznyechik_ctr_acpkm"
 end

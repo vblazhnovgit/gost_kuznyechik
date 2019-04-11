@@ -265,10 +265,10 @@ module GostKuznyechik
       0x98, 0x99, 0x9a, 0x9b, 0x9c, 0x9d, 0x9e, 0x9f
     ].pack('C*').freeze
     
-    def self.acpkmCtrKey(key)
-      key = encryptBlock(W5) + encryptBlock(W6)
+    def self.acpkmCtrKey(keys)
+      key = encryptBlock(W5, keys) + encryptBlock(W6, keys)
       # Recalculate @inkey array in base object
-      inkey = keyToNumbers(@key)
+      inkey = keyToNumbers(key)
     end
 
     # block - byte string  
