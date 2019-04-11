@@ -1,4 +1,5 @@
 require "test_helper"
+include GostKuznyechik
 
 # GOST Р 34.13-2015 Kuznyechik ECB test data
 kSelfTestGostKMasterKeyData = [ 
