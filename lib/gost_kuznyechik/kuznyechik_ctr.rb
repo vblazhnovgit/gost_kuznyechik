@@ -18,7 +18,7 @@ module GostKuznyechik
       @counter += self.class.zeroBytes(BlockLengthInBytes/2) 
     end
     
-    def crypt(indata)
+    def encrypt(indata)
       data_len = indata.length
       outdata = self.class.zeroBytes(data_len)
       data_index = 0
@@ -61,7 +61,11 @@ module GostKuznyechik
         @prev_len = data_len
       end
       return outdata
-    end   
+    end
+
+    def decrypt(data)
+      encrypt(data)
+    end
     
   end
 end

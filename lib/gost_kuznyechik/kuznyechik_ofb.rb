@@ -14,7 +14,7 @@ module GostKuznyechik
       @incomplete_block_len = 0
     end
     
-    def crypt(data)
+    def encrypt(data)
       data_len = data.length
       outdata = ''
       if @incomplete_block_len > 0 then      
@@ -39,6 +39,7 @@ module GostKuznyechik
           @incomplete_block_len = 0
         end
       end
+      
       left_data_len = data_len-@incomplete_block_len
       (0...(left_data_len / @gamma_s)).each do |i|
         encr_data = data[(@incomplete_block_len+(i * @gamma_s))...(@incomplete_block_len+((i+1) * @gamma_s))]
@@ -52,6 +53,7 @@ module GostKuznyechik
         @ctxR = @ctxR[BlockLengthInBytes..-1] + @gamma_block
         left_data_len -= @gamma_s
       end
+      
       if left_data_len > 0 then
         # incomplete block start
         encr_data = data[-left_data_len..-1]
@@ -62,6 +64,10 @@ module GostKuznyechik
         @incomplete_block_len = left_data_len
       end
       outdata
+    end
+    
+    def decrypt(data)
+      encrypt(data)
     end
     
   end

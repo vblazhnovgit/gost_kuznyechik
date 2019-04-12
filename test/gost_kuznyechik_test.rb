@@ -216,10 +216,10 @@ class GostKuznyechikTest < Minitest::Test
     plain_text = SelfTestGostKPlainText
     encrypted_test = SelfTestGostKCtrEncText
 
-    encrypted_text = KuznyechikCtr.new(key, iv, Kuznyechik::BlockLengthInBytes).crypt(plain_text)
+    encrypted_text = KuznyechikCtr.new(key, iv, Kuznyechik::BlockLengthInBytes).encrypt(plain_text)
     assert encrypted_text == encrypted_test
     
-    decrypted_text = KuznyechikCtr.new(key, iv, Kuznyechik::BlockLengthInBytes).crypt(encrypted_test)
+    decrypted_text = KuznyechikCtr.new(key, iv, Kuznyechik::BlockLengthInBytes).decrypt(encrypted_test)
     assert decrypted_text == plain_text 
   end
 
@@ -230,19 +230,25 @@ class GostKuznyechikTest < Minitest::Test
     plain_text = SelfTestGostKPlainText
     encrypted_test = SelfTestGostKOfbEncText
     
-    encrypted_text = KuznyechikOfb.new(key, iv, s).crypt(plain_text)
+    encrypted_text = KuznyechikOfb.new(key, iv, s).encrypt(plain_text)
     assert encrypted_text == encrypted_test
     
-    decrypted_text = KuznyechikOfb.new(key, iv, s).crypt(encrypted_test)
+    decrypted_text = KuznyechikOfb.new(key, iv, s).decrypt(encrypted_test)
     assert decrypted_text == plain_text
   end
 
   def test_cfb_standard
     key = SelfTestGostKMasterKeyData
     iv = SelfTestGostKCfbSV
+    s = BlockSize
     plain_text = SelfTestGostKPlainText
     encrypted_test = SelfTestGostKCfbEncText
     
+    encrypted_text = KuznyechikCfb.new(key, iv, s).encrypt(plain_text)
+    assert encrypted_text == encrypted_test
+    
+    decrypted_text = KuznyechikCfb.new(key, iv, s).decrypt(encrypted_test)
+    assert decrypted_text == plain_text
   end
 
   def test_cbc_standard
@@ -266,10 +272,10 @@ class GostKuznyechikTest < Minitest::Test
     plain_text = SelfTestGostKCtrAcpkmPlainText
     encrypted_test = SelfTestGostKCtrAcpkmEncText
     
-    encrypted_text = KuznyechikCtrAcpkm.new(key, iv, s, n).crypt(plain_text)
+    encrypted_text = KuznyechikCtrAcpkm.new(key, iv, s, n).encrypt(plain_text)
     assert encrypted_text == encrypted_test
     
-    decrypted_text = KuznyechikCtrAcpkm.new(key, iv, s, n).crypt(encrypted_test)
+    decrypted_text = KuznyechikCtrAcpkm.new(key, iv, s, n).decrypt(encrypted_test)
     assert decrypted_text == plain_text     
   end
 

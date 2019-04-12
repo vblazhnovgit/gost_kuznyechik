@@ -21,7 +21,7 @@ module GostKuznyechik
       self.class.incrementModulo(@counter, BlockLengthInBytes)
     end
     
-    def crypt(indata)
+    def encrypt(indata)
       data_len = indata.length
       if data_len > 0 then
         outdata = self.class.zeroBytes(data_len)
@@ -54,6 +54,10 @@ module GostKuznyechik
       else
         return ''
       end
+    end
+    
+    def decrypt(indata)
+      encrypt(indata)
     end
     
     protected

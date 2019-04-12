@@ -101,7 +101,7 @@ module GostKuznyechik
     ACPKM_CTR_NULL = Kuznyechik::zeroBytes(KeyLengthInBytes+BlockLengthInBytes)
 
     def deriveKeys
-      kk = crypt(ACPKM_CTR_NULL)
+      kk = encrypt(ACPKM_CTR_NULL)
       # re-initialize ECB context
       @ecb = KuznyechikEcb.new(kk[0...KeyLengthInBytes].dup)
       @mac_K1 = kk[KeyLengthInBytes..-1].dup
