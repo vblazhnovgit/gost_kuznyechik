@@ -239,9 +239,9 @@ module GostKuznyechik
       padding_len = BlockLengthInBytes - (incomplete_block.length % BlockLengthInBytes)
       padded_block = incomplete_block.dup
       padded_block += 0x80.chr
-      padding_len += 1
-      if padding_len < BlockLengthInBytes then
-        padded_block += 0.chr * (BlockLengthInBytes - padding_len)
+      padding_len -= 1
+      if padding_len > 0 then
+        padded_block += 0.chr * padding_len
       end
       padded_block
     end
