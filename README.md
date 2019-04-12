@@ -1,6 +1,6 @@
 # GostKuznyechik
 
-GOST R 34.12/13-2015 (Kuznyechik) block cipher algorithms
+GOST R 34.12/13-2015 (Kuznyechik) block cipher algorithms for ECB, CBC, CTR, OFB, CFB, OMAC, CTR-ACPKM and OMAC-ACPKM modes.
 
 ## Installation
 

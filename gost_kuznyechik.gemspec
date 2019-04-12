@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["vblazhnov@yandex.ru"]
 
   spec.summary       = %q{Kuznyechik block ciphers}
-  spec.description   = %q{GOST R 34.12/13-2015 Kuznyechik block ciphers}
+  spec.description   = %q{GOST R 34.12/13-2015 (Kuznyechik) block cipher algorithms for ECB, CBC, CTR, OFB, CFB, OMAC, CTR-ACPKM and OMAC-ACPKM modes.}
   spec.homepage      = "https://github.com/vblazhnovgit/gost_kuznyechik.git"
   spec.license       = "MIT"
 
