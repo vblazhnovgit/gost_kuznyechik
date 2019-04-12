@@ -215,11 +215,14 @@ class GostKuznyechikTest < Minitest::Test
     iv = SelfTestGostKCtrSV
     plain_text = SelfTestGostKPlainText
     encrypted_test = SelfTestGostKCtrEncText
+    text_len = plain_text.length
 
     encrypted_text = KuznyechikCtr.new(key, iv, Kuznyechik::BlockLengthInBytes).encrypt(plain_text)
     assert encrypted_text == encrypted_test
     
-    decrypted_text = KuznyechikCtr.new(key, iv, Kuznyechik::BlockLengthInBytes).decrypt(encrypted_test)
+    ctx = KuznyechikCtr.new(key, iv, Kuznyechik::BlockLengthInBytes)
+    decrypted_text = ctx.decrypt(encrypted_test[0...text_len/3]) +
+      ctx.decrypt(encrypted_test[text_len/3..-1])
     assert decrypted_text == plain_text 
   end
 
@@ -229,11 +232,14 @@ class GostKuznyechikTest < Minitest::Test
     s = BlockSize
     plain_text = SelfTestGostKPlainText
     encrypted_test = SelfTestGostKOfbEncText
+    text_len = plain_text.length
     
     encrypted_text = KuznyechikOfb.new(key, iv, s).encrypt(plain_text)
     assert encrypted_text == encrypted_test
     
-    decrypted_text = KuznyechikOfb.new(key, iv, s).decrypt(encrypted_test)
+    ctx = KuznyechikOfb.new(key, iv, s)
+    decrypted_text = ctx.decrypt(encrypted_test[0...text_len/3]) +
+      ctx.decrypt(encrypted_test[text_len/3..-1])
     assert decrypted_text == plain_text
   end
 
@@ -243,11 +249,14 @@ class GostKuznyechikTest < Minitest::Test
     s = BlockSize
     plain_text = SelfTestGostKPlainText
     encrypted_test = SelfTestGostKCfbEncText
+    text_len = plain_text.length
     
     encrypted_text = KuznyechikCfb.new(key, iv, s).encrypt(plain_text)
     assert encrypted_text == encrypted_test
     
-    decrypted_text = KuznyechikCfb.new(key, iv, s).decrypt(encrypted_test)
+    ctx = KuznyechikCfb.new(key, iv, s)
+    decrypted_text = ctx.decrypt(encrypted_test[0...text_len/3]) +
+      ctx.decrypt(encrypted_test[text_len/3..-1])
     assert decrypted_text == plain_text
   end
 
@@ -271,11 +280,14 @@ class GostKuznyechikTest < Minitest::Test
     iv = SelfTestGostKCtrAcpkmIV
     plain_text = SelfTestGostKCtrAcpkmPlainText
     encrypted_test = SelfTestGostKCtrAcpkmEncText
+    text_len = plain_text.length
     
     encrypted_text = KuznyechikCtrAcpkm.new(key, iv, s, n).encrypt(plain_text)
     assert encrypted_text == encrypted_test
     
-    decrypted_text = KuznyechikCtrAcpkm.new(key, iv, s, n).decrypt(encrypted_test)
+    ctx = KuznyechikCtrAcpkm.new(key, iv, s, n)
+    decrypted_text = ctx.decrypt(encrypted_test[0...text_len/3]) +
+      ctx.decrypt(encrypted_test[text_len/3..-1])
     assert decrypted_text == plain_text     
   end
 
@@ -291,8 +303,9 @@ class GostKuznyechikTest < Minitest::Test
     assert mac == mac_test 
     
     plain_text = SelfTestGostKCtrAcpkmMac_data_TC26_M_5
+    text_len = plain_text.length
     mac_test = SelfTestGostKCtrAcpkmMac_mac_TC26_M_5    
-    mac = KuznyechikOmacAcpkm.new(key, n, t, s).update(plain_text).final
+    mac = KuznyechikOmacAcpkm.new(key, n, t, s).update(plain_text[0...text_len/3]).update(plain_text[text_len/3..-1]).final
     assert mac == mac_test 
   end
 

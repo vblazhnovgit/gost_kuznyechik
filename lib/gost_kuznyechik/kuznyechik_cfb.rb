@@ -10,53 +10,58 @@ module GostKuznyechik
       @keys = self.class.expandEncryptKeys(@inkey)
       tmp_block = @ctxR[0...BlockLengthInBytes]
       @gamma_block = self.class.encryptBlock(tmp_block, @keys)
-      @incomplete_block = ''
+      @incomplete_block = ''  
       @incomplete_block_len = 0
     end
     
     def encrypt(data)
       data_len = data.length
+      left_data_len = data_len
       outdata = ''
       if @incomplete_block_len > 0 then      
         # use old @gamma_block
         if data_len < @gamma_s - @incomplete_block_len then
           # incomplete block yet
-          outdata = data.dup
+          encr_data = data.dup
           (0...data_len).each do |j|
-            outdata[j] = (@gamma_block[@incomplete_block_len-1 + j].ord ^ outdata[j].ord).chr
+            encr_data[j] = (@gamma_block[@incomplete_block_len + j].ord ^ encr_data[j].ord).chr
           end
           @incomplete_block_len += data_len
-          @incomplete_block += outdata
-          return outdata
+          @incomplete_block += encr_data
+          return encr_data
         else
-          outdata = data[0...(@gamma_s - @incomplete_block_len)]
-          (0...outdata.length).each do |j|
-            outdata[j] = (@gamma_block[@incomplete_block_len-1 + j].ord ^ outdata[j].ord).chr
+          encr_data = data[0...(@gamma_s - @incomplete_block_len)]
+          (0...encr_data.length).each do |j|
+            encr_data[j] = (@gamma_block[@incomplete_block_len + j].ord ^ encr_data[j].ord).chr
           end
-          # complete block
-          @incomplete_block += outdata
+          outdata += encr_data
+          # complete block - gamma update
+          @incomplete_block += encr_data
+          left_data_len -= encr_data.length
           @ctxR = @ctxR[@gamma_s..-1] + @incomplete_block
           tmp_block = @ctxR[0...BlockLengthInBytes]
           @gamma_block = self.class.encryptBlock(tmp_block, @keys)
           @incomplete_block = ''
-          @incomplete_block_len = 0
         end
       end
       
-      left_data_len = data_len-@incomplete_block_len
       (0...(left_data_len / @gamma_s)).each do |i|
-        encr_data = data[(@incomplete_block_len+(i * @gamma_s))...(@incomplete_block_len+((i+1) * @gamma_s))]
+        if @incomplete_block_len > 0 then
+          encr_data = data[((i + 1) * @gamma_s - @incomplete_block_len)...((i + 2) * @gamma_s - @incomplete_block_len)]
+        else
+          encr_data = data[(i * @gamma_s)...((i + 1) * @gamma_s)]
+        end
         (0...@gamma_s).each do |j|
           encr_data[j] = (@gamma_block[j].ord ^ encr_data[j].ord).chr
         end
         outdata += encr_data
-        # complete block        
+        # complete block - gamma update        
         @ctxR = @ctxR[@gamma_s..-1] + encr_data
         tmp_block = @ctxR[0...BlockLengthInBytes]
-        @gamma_block = self.class.encryptBlock(tmp_block, @keys)
-        left_data_len -= @gamma_s
+        @gamma_block = self.class.encryptBlock(tmp_block, @keys)      
       end
-
+      
+      left_data_len %= @gamma_s 
       if left_data_len > 0 then
         # incomplete block start
         encr_data = data[-left_data_len..-1]
@@ -70,59 +75,68 @@ module GostKuznyechik
       outdata
     end
     
-    
+    # Use input encrypted text to gamma update    
     def decrypt(data)
       data_len = data.length
+      left_data_len = data_len
       outdata = ''
       if @incomplete_block_len > 0 then      
         # use old @gamma_block
         if data_len < @gamma_s - @incomplete_block_len then
           # incomplete block yet
-          outdata = data.dup
+          encr_data = data.dup
+          decr_data = data.dup
           (0...data_len).each do |j|
-            outdata[j] = (@gamma_block[@incomplete_block_len-1 + j].ord ^ outdata[j].ord).chr
+            decr_data[j] = (@gamma_block[@incomplete_block_len + j].ord ^ encr_data[j].ord).chr
           end
           @incomplete_block_len += data_len
-          @incomplete_block += data.dup
-          return outdata
+          @incomplete_block += encr_data
+          return decr_data
         else
-          outdata = data[0...(@gamma_s - @incomplete_block_len)]
-          (0...outdata.length).each do |j|
-            outdata[j] = (@gamma_block[@incomplete_block_len-1 + j].ord ^ outdata[j].ord).chr
+          encr_data = data[0...(@gamma_s - @incomplete_block_len)]
+          decr_data = encr_data.dup
+          (0...encr_data.length).each do |j|
+            decr_data[j] = (@gamma_block[@incomplete_block_len + j].ord ^ encr_data[j].ord).chr
           end
-          # complete block
-          @incomplete_block += data[0...(@gamma_s - @incomplete_block_len)]
+          outdata += decr_data
+          # complete block - gamma update
+          @incomplete_block += encr_data
+          left_data_len -= encr_data.length
           @ctxR = @ctxR[@gamma_s..-1] + @incomplete_block
           tmp_block = @ctxR[0...BlockLengthInBytes]
           @gamma_block = self.class.encryptBlock(tmp_block, @keys)
           @incomplete_block = ''
-          @incomplete_block_len = 0
         end
       end
       
-      left_data_len = data_len-@incomplete_block_len
       (0...(left_data_len / @gamma_s)).each do |i|
-        encr_data = data[(@incomplete_block_len+(i * @gamma_s))...(@incomplete_block_len+((i+1) * @gamma_s))]
-        (0...@gamma_s).each do |j|
-          encr_data[j] = (@gamma_block[j].ord ^ encr_data[j].ord).chr
+        if @incomplete_block_len > 0 then
+          encr_data = data[((i + 1) * @gamma_s - @incomplete_block_len)...((i + 2) * @gamma_s - @incomplete_block_len)]
+        else
+          encr_data = data[(i * @gamma_s)...((i + 1) * @gamma_s)]
         end
-        outdata += encr_data
-        # complete block        
-        @ctxR = @ctxR[@gamma_s..-1] + data[(@incomplete_block_len+(i * @gamma_s))...(@incomplete_block_len+((i+1) * @gamma_s))]
+        decr_data = encr_data.dup
+        (0...@gamma_s).each do |j|
+          decr_data[j] = (@gamma_block[j].ord ^ encr_data[j].ord).chr
+        end
+        outdata += decr_data
+        # complete block - gamma update        
+        @ctxR = @ctxR[@gamma_s..-1] + encr_data
         tmp_block = @ctxR[0...BlockLengthInBytes]
-        @gamma_block = self.class.encryptBlock(tmp_block, @keys)
-        left_data_len -= @gamma_s
+        @gamma_block = self.class.encryptBlock(tmp_block, @keys)      
       end
-
+      
+      left_data_len %= @gamma_s 
       if left_data_len > 0 then
         # incomplete block start
         encr_data = data[-left_data_len..-1]
+        decr_data = encr_data.dup
         (0...left_data_len).each do |j|
-          encr_data[j] = (@gamma_block[j].ord ^ encr_data[j].ord).chr
+          decr_data[j] = (@gamma_block[j].ord ^ encr_data[j].ord).chr
         end
-        outdata += encr_data
+        outdata += decr_data
         @incomplete_block_len = left_data_len
-        @incomplete_block = data[-left_data_len..-1]
+        @incomplete_block = encr_data
       end
       outdata
     end
