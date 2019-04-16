@@ -217,10 +217,10 @@ class GostKuznyechikTest < Minitest::Test
     encrypted_test = SelfTestGostKCtrEncText
     text_len = plain_text.length
 
-    encrypted_text = KuznyechikCtr.new(key, iv, Kuznyechik::BlockLengthInBytes).encrypt(plain_text)
+    encrypted_text = KuznyechikCtr.new(key, iv, BlockSize).encrypt(plain_text)
     assert encrypted_text == encrypted_test
     
-    ctx = KuznyechikCtr.new(key, iv, Kuznyechik::BlockLengthInBytes)
+    ctx = KuznyechikCtr.new(key, iv, BlockSize)
     decrypted_text = ctx.decrypt(encrypted_test[0...text_len/3]) +
       ctx.decrypt(encrypted_test[text_len/3..-1])
     assert decrypted_text == plain_text 

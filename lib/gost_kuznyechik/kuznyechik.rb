@@ -3,7 +3,6 @@ module GostKuznyechik
   class Kuznyechik
     # class constants
     BlockLengthInBytes = 16
-    WorkspaceOfScheduleRoundKeys = 32
     NumberOfRounds = 10
     NumberOfRoundsInKeySchedule = 8
     KeyLengthInBytes = 32

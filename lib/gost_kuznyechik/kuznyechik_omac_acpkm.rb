@@ -53,7 +53,7 @@ module GostKuznyechik
             end  
             @mac_section_counter += 1
             @mac_byte_counter = 0
-            if (@mac_derived_key_counter * (KeyLengthInBytes + BlockLengthInBytes)) % @mac_T == 0 then
+            if (@mac_derived_key_counter * @mac_N) % @mac_T == 0 then
               @mac_base_key_counter += 1
               acpkmCtrKey
             end

@@ -72,9 +72,9 @@ module GostKuznyechik
     ].pack('C*').freeze
     
     def acpkmCtrKey
-      key = self.class.encryptBlock(W5, @keys) + self.class.encryptBlock(W6, @keys)
+      @key = self.class.encryptBlock(W5, @keys) + self.class.encryptBlock(W6, @keys)
       # Recalculate @inkey array in base object
-      @inkey = self.class.keyToNumbers(key)
+      @inkey = self.class.keyToNumbers(@key)
     end
     
   end
