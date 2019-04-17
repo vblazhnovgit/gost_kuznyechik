@@ -11,4 +11,5 @@ module GostKuznyechik
   require "gost_kuznyechik/kuznyechik_cbc"
   require "gost_kuznyechik/kuznyechik_ctr_acpkm"
   require "gost_kuznyechik/kuznyechik_omac_acpkm"
+  require "gost_kuznyechik/kuznyechik_key_exp_imp"
 end
