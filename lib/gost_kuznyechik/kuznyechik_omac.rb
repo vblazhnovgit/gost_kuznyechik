@@ -28,6 +28,7 @@ module GostKuznyechik
         if indata_length < BlockLengthInBytes - @lastBlockSize then
           # No full block
           @lastBlock += indata
+          @lastBlockSize += indata_length
           @bytes_count += indata_length
           return self
         else
@@ -44,7 +45,7 @@ module GostKuznyechik
             end
             @ctxC = self.class.encryptBlock(@lastBlock, @keys)
             indata_index += BlockLengthInBytes - @lastBlockSize
-            indata_length -= BlockLengthInBytes - @lastBlockSize
+            indata_length -= BlockLengthInBytes - @lastBlockSize            
             if indata_length >= BlockLengthInBytes then
               @LastBlock = indata[indata_index...(indata_index + LCC_KUZNYECHIK_BLOCK_LEN)].dup
               indata_index += BlockLengthInBytes
@@ -55,13 +56,12 @@ module GostKuznyechik
               indata_index += indata_length
               @LastBlockSize = indata_length
               indata_length = 0
-            end        
+            end             
           end       
         end
       end
       
       (0...indata_length/BlockLengthInBytes).each do |i|
-        indata_index = i * BlockLengthInBytes
         if @isFirstBlock then
           @lastBlock = indata[indata_index...(indata_index + BlockLengthInBytes)].dup
           @lastBlockSize = BlockLengthInBytes
@@ -74,6 +74,7 @@ module GostKuznyechik
         end
         @ctxC = self.class.encryptBlock(@lastBlock, @keys)
         @lastBlock = indata[indata_index...(indata_index + BlockLengthInBytes)].dup
+        @lastBlockSize = BlockLengthInBytes
         indata_index += BlockLengthInBytes
       end
     
